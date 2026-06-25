@@ -1,11 +1,6 @@
 pipeline {
     agent any
 
-    tools {
-        jdk 'jdk-21'
-        maven 'maven'
-    }
-
     options {
         buildDiscarder(logRotator(numToKeepStr: '10'))
         timestamps()
@@ -20,7 +15,13 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh 'mvn -B clean package'
+                script {
+                    if (isUnix()) {
+                        sh 'mvn -B clean package'
+                    } else {
+                        bat 'mvn -B clean package'
+                    }
+                }
             }
         }
     }
